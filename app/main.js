@@ -49,6 +49,7 @@ const getFileFromUser = (targetWindow) => {
 const openFile = (targetWindow, file) => {
     const content = fs.readFileSync(file).toString();
     targetWindow.webContents.send('file-opened', file, content);
+    targetWindow.setRepresentedFilename(file);
 };
 
 app.on('ready', () => {
