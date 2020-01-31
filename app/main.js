@@ -5,11 +5,15 @@ let mainWindow = null;
 
 app.on('ready', () => {
     mainWindow = new BrowserWindow({
+        show: false,
         webPreferences: {
-            preload: path.join(__dirname, 'renderer.js')
+            nodeIntegration: true
         }
     });
     mainWindow.webContents.loadFile(path.join(__dirname, 'index.html'));
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
