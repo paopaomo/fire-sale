@@ -27,6 +27,10 @@ openFileButton.addEventListener('click', () => {
     mainProcess.getFileFromUser(currentWindow);
 });
 
+newFileButton.addEventListener('click', () => {
+    mainProcess.createWindow();
+});
+
 ipcRenderer.on('file-opened', (event, file, content) => {
     markdownView.innerHTML = content;
     renderMarkdownToHtml(content);
