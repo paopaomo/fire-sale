@@ -6,8 +6,26 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>File Sale</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<section class="controls">
+    <button id="new-file">New File</button>
+    <button id="open-file">Open File</button>
+    <button id="save-markdown" disabled>Save File</button>
+    <button id="revert" disabled>Revert</button>
+    <button id="save-html">Save HTML</button>
+    <button id="show-file" disabled>Show File</button>
+    <button id="open-in-default" disabled>Open in Default Application</button>
+</section>
+<section class="content">
+    <label for="markdown" hidden>Markdown Content</label>
+    <textarea class="raw-markdown" id="markdown"></textarea>
+    <div class="renderer-html" id="html"></div>
+</section>
 
+<script>
+    require('./renderer.js');
+</script>
 </body>
 </html>
