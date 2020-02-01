@@ -3,6 +3,7 @@ const { remote, ipcRenderer } = require('electron');
 const path = require('path');
 
 const mainProcess = remote.require('./main.js');
+const { Menu } = remote;
 
 const markdownView = document.getElementById('markdown');
 const htmlView = document.getElementById('html');
@@ -17,6 +18,34 @@ const openInDefaultButton = document.getElementById('open-in-default');
 const currentWindow = remote.getCurrentWindow();
 let filePath = '';
 let originalContent = '';
+
+const markdownContextMenu = Menu.buildFromTemplate([
+    {
+        label: 'Open file',
+        click() {
+            mainProcess.getFileFromUser(currentWindow);
+        }
+    },
+    {
+        type: 'separator'
+    },
+    {
+        label: 'Cut',
+        role: 'cut'
+    },
+    {
+        label: 'Copy',
+        role: 'copy'
+    },
+    {
+        label: 'Paste',
+        role: 'paste'
+    },
+    {
+        label: 'Select All',
+        role: 'selectAll'
+    }
+]);
 
 const renderMarkdownToHtml = (markdown) => {
     htmlView.innerHTML = marked(markdown);
@@ -103,6 +132,11 @@ markdownView.addEventListener('drop', (event) => {
     }
     markdownView.classList.remove('drag-over');
     markdownView.classList.remove('drag-error');
+});
+
+markdownView.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    markdownContextMenu.popup();
 });
 
 ipcRenderer.on('file-opened', (event, file, content) => {
