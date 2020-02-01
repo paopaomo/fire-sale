@@ -77,6 +77,7 @@ saveMarkdownButton.addEventListener('click', () => {
 revertButton.addEventListener('click', () => {
     markdownView.value = originalContent;
     renderMarkdownToHtml(originalContent);
+    updateUserInterface(false);
 });
 
 markdownView.addEventListener('dragover', (event) => {
