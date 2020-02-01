@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 const windows = new Set();
+const openFiles = new Map();
 
 const createWindow = () => {
     let x, y;
@@ -26,6 +27,7 @@ const createWindow = () => {
     });
     newWindow.on('closed', () => {
         windows.delete(newWindow);
+        stopWatchingFile(newWindow);
         newWindow = null;
     });
     windows.add(newWindow);
@@ -51,6 +53,7 @@ const openFile = (targetWindow, file) => {
     targetWindow.webContents.send('file-opened', file, content);
     app.addRecentDocument(file);
     targetWindow.setRepresentedFilename(file);
+    startWatchingFile(targetWindow, file);
 };
 
 const saveHTML = (targetWindow, content) => {
@@ -89,6 +92,24 @@ const saveMarkdown = (targetWindow, file, content) => {
             targetWindow.webContents.send('save-new-file', filePath, content);
         }
     })
+};
+
+const stopWatchingFile = (targetWindow) => {
+    if(openFiles.has(targetWindow)) {
+        openFiles.get(targetWindow).close();
+        openFiles.delete(targetWindow);
+    }
+};
+
+const startWatchingFile = (targetWindow, file) => {
+    stopWatchingFile(targetWindow);
+
+    const watcher = fs.watch(file, (eventType) => {
+        const content = fs.readFileSync(file).toString();
+        targetWindow.webContents.send('file-opened', file, content);
+    });
+
+    openFiles.set(targetWindow, watcher);
 };
 
 app.on('ready', () => {
