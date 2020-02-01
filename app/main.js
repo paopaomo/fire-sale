@@ -48,8 +48,8 @@ const getFileFromUser = (targetWindow) => {
 
 const openFile = (targetWindow, file) => {
     const content = fs.readFileSync(file).toString();
-    app.addRecentDocument(file);
     targetWindow.webContents.send('file-opened', file, content);
+    app.addRecentDocument(file);
     targetWindow.setRepresentedFilename(file);
 };
 
@@ -66,6 +66,29 @@ const saveHTML = (targetWindow, content) => {
           fs.writeFileSync(filePath, content);
       }
   })
+};
+
+const saveMarkdown = (targetWindow, file, content) => {
+    if(file) {
+        fs.writeFileSync(file, content);
+        targetWindow.webContents.send('save-existed-file', file, content);
+        return;
+    }
+    dialog.showSaveDialog(targetWindow, {
+        title: 'Save Markdown',
+        defaultPath: app.getPath('documents'),
+        filters: [
+            { name: 'Markdown Files', extensions: ['markdown', 'md'] }
+        ]
+    }).then(response => {
+        const { canceled, filePath } = response;
+        if(!canceled) {
+            fs.writeFileSync(filePath, content);
+            app.addRecentDocument(filePath);
+            targetWindow.setRepresentedFilename(filePath);
+            targetWindow.webContents.send('save-new-file', filePath, content);
+        }
+    })
 };
 
 app.on('ready', () => {
@@ -92,4 +115,4 @@ app.on('will-finish-launching', () => {
     });
 });
 
-module.exports = { getFileFromUser, createWindow, saveHTML };
+module.exports = { getFileFromUser, createWindow, saveHTML, saveMarkdown };

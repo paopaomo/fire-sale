@@ -19,7 +19,7 @@ let filePath = '';
 let originalContent = '';
 
 const renderMarkdownToHtml = (markdown) => {
-    htmlView.innerHTML = marked(markdown, { sanitize: true });
+    htmlView.innerHTML = marked(markdown);
 };
 
 const updateUserInterface = (isEdited) => {
@@ -54,10 +54,25 @@ saveHtmlButton.addEventListener('click', () => {
     mainProcess.saveHTML(currentWindow, htmlView.innerHTML);
 });
 
+saveMarkdownButton.addEventListener('click', () => {
+    mainProcess.saveMarkdown(currentWindow, filePath, markdownView.value);
+});
+
 ipcRenderer.on('file-opened', (event, file, content) => {
     filePath = file;
     originalContent = content;
     markdownView.innerHTML = content;
     renderMarkdownToHtml(content);
-    updateUserInterface();
+    updateUserInterface(false);
+});
+
+ipcRenderer.on('save-existed-file', (event, file, content) => {
+    originalContent = content;
+    updateUserInterface(false);
+});
+
+ipcRenderer.on('save-new-file', (event, file, content) => {
+    filePath = file;
+    originalContent = content;
+    updateUserInterface(false);
 });
