@@ -115,4 +115,4 @@ app.on('will-finish-launching', () => {
     });
 });
 
-module.exports = { getFileFromUser, createWindow, saveHTML, saveMarkdown };
+module.exports = { getFileFromUser, createWindow, saveHTML, saveMarkdown, openFile };
