@@ -48,8 +48,24 @@ const getFileFromUser = (targetWindow) => {
 
 const openFile = (targetWindow, file) => {
     const content = fs.readFileSync(file).toString();
+    app.addRecentDocument(file);
     targetWindow.webContents.send('file-opened', file, content);
     targetWindow.setRepresentedFilename(file);
+};
+
+const saveHTML = (targetWindow, content) => {
+  dialog.showSaveDialog(targetWindow, {
+      title: 'Save HTML',
+      defaultPath: app.getPath('documents'),
+      filters: [
+          { name: 'HTML Files', extensions: ['html', 'htm'] }
+      ]
+  }).then(response => {
+      const { canceled, filePath } = response;
+      if(!canceled) {
+          fs.writeFileSync(filePath, content);
+      }
+  })
 };
 
 app.on('ready', () => {
@@ -69,4 +85,11 @@ app.on('activate', (event, hasVisibleWindows) => {
     }
 });
 
-module.exports = { getFileFromUser, createWindow };
+app.on('will-finish-launching', () => {
+    app.on('open-file', (event, file) => {
+        const win = createWindow();
+        openFile(win, file);
+    });
+});
+
+module.exports = { getFileFromUser, createWindow, saveHTML };
