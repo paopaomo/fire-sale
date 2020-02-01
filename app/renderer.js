@@ -44,6 +44,14 @@ const fileTypeIsSupported = (file) => {
     return ['text/plain', 'text/markdown'].includes(file.type);
 };
 
+const renderFile = (file, content) => {
+    filePath = file;
+    originalContent = content;
+    markdownView.value = content;
+    renderMarkdownToHtml(content);
+    updateUserInterface(false);
+};
+
 markdownView.addEventListener('keyup', (e) => {
     const currentContent = e.target.value;
     renderMarkdownToHtml(currentContent);
@@ -97,11 +105,39 @@ markdownView.addEventListener('drop', (event) => {
 });
 
 ipcRenderer.on('file-opened', (event, file, content) => {
-    filePath = file;
-    originalContent = content;
-    markdownView.innerHTML = content;
-    renderMarkdownToHtml(content);
-    updateUserInterface(false);
+    if(currentWindow.isDocumentEdited()) {
+        remote.dialog.showMessageBox(currentWindow, {
+            type: 'warning',
+            buttons: ['Yes', 'Cancel'],
+            defaultId: 0,
+            title: 'Overwrite Current Unsaved Changes?',
+            message: 'Opening a new file in this window will overwrite your unsaved changes. Open this file anyway?',
+            cancelId: 1
+        }).then(response => {
+            response = response.response;
+            if(response === 0) {
+                renderFile(file, content);
+            }
+        })
+    } else {
+        renderFile(file, content);
+    }
+});
+
+ipcRenderer.on('file-changed', (event, file, content) => {
+    remote.dialog.showMessageBox(currentWindow, {
+        type: 'warning',
+        buttons: ['Yes', 'Cancel'],
+        defaultId: 0,
+        title: 'Overwrite Current Unsaved Changes?',
+        message: 'Another application has changed this file. Load changes?',
+        cancelId: 1
+    }).then(response => {
+        response = response.response;
+        if(response === 0) {
+            renderFile(file, content);
+        }
+    })
 });
 
 ipcRenderer.on('save-existed-file', (event, file, content) => {

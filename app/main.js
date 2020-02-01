@@ -25,6 +25,25 @@ const createWindow = () => {
     newWindow.once('ready-to-show', () => {
         newWindow.show();
     });
+    newWindow.on('close', (event) => {
+        if(newWindow.isDocumentEdited()) {
+            event.preventDefault();
+
+            dialog.showMessageBox(newWindow, {
+                type: 'warning',
+                buttons: ['Quit Anyway', 'Cancel'],
+                defaultId: 0,
+                title: 'Quit with Unsaved Changes?',
+                message: 'Your changes will be lost if you do not save.',
+                cancelId: 1
+            }).then(response => {
+                response = response.response;
+                if(response === 0) {
+                    newWindow.destroy();
+                }
+            })
+        }
+    });
     newWindow.on('closed', () => {
         windows.delete(newWindow);
         stopWatchingFile(newWindow);
@@ -106,7 +125,7 @@ const startWatchingFile = (targetWindow, file) => {
 
     const watcher = fs.watch(file, (eventType) => {
         const content = fs.readFileSync(file).toString();
-        targetWindow.webContents.send('file-opened', file, content);
+        targetWindow.webContents.send('file-changed', file, content);
     });
 
     openFiles.set(targetWindow, watcher);
