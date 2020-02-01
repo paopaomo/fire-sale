@@ -58,6 +58,11 @@ saveMarkdownButton.addEventListener('click', () => {
     mainProcess.saveMarkdown(currentWindow, filePath, markdownView.value);
 });
 
+revertButton.addEventListener('click', () => {
+    markdownView.value = originalContent;
+    renderMarkdownToHtml(originalContent);
+});
+
 ipcRenderer.on('file-opened', (event, file, content) => {
     filePath = file;
     originalContent = content;
