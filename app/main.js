@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -132,6 +132,7 @@ const startWatchingFile = (targetWindow, file) => {
 };
 
 app.on('ready', () => {
+    Menu.setApplicationMenu(require('./application-menu'));
     createWindow();
 });
 

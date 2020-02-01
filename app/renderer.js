@@ -152,6 +152,14 @@ ipcRenderer.on('save-new-file', (event, file, content) => {
     updateUserInterface(false);
 });
 
+ipcRenderer.on('save-markdown', () => {
+    mainProcess.saveMarkdown(currentWindow, filePath, markdownView.value);
+});
+
+ipcRenderer.on('save-html', () => {
+    mainProcess.saveHTML(currentWindow, htmlView.innerHTML);
+});
+
 document.addEventListener('dragstart', event => event.preventDefault());
 document.addEventListener('dragover', event => event.preventDefault());
 document.addEventListener('dragleave', event => event.preventDefault());
