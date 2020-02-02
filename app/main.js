@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, Menu } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -25,6 +25,9 @@ const createWindow = () => {
     newWindow.once('ready-to-show', () => {
         newWindow.show();
     });
+    newWindow.on('focus', () => {
+        require('./application-menu')();
+    });
     newWindow.on('close', (event) => {
         if(newWindow.isDocumentEdited()) {
             event.preventDefault();
@@ -47,6 +50,7 @@ const createWindow = () => {
     newWindow.on('closed', () => {
         windows.delete(newWindow);
         stopWatchingFile(newWindow);
+        require('./application-menu')();
         newWindow = null;
     });
     windows.add(newWindow);
@@ -73,6 +77,7 @@ const openFile = (targetWindow, file) => {
     app.addRecentDocument(file);
     targetWindow.setRepresentedFilename(file);
     startWatchingFile(targetWindow, file);
+    require('./application-menu')();
 };
 
 const saveHTML = (targetWindow, content) => {
@@ -132,7 +137,7 @@ const startWatchingFile = (targetWindow, file) => {
 };
 
 app.on('ready', () => {
-    Menu.setApplicationMenu(require('./application-menu'));
+    require('./application-menu')();
     createWindow();
 });
 
