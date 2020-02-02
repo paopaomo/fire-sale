@@ -19,12 +19,34 @@ const currentWindow = remote.getCurrentWindow();
 let filePath = '';
 let originalContent = '';
 
+const showFile = () => {
+    if(!filePath) {
+        return alert('This file has not been saved to the filesystem.');
+    }
+    shell.showItemInFolder(filePath);
+};
+
+const openInDefaultApplication = () => {
+    if(!filePath) {
+        return alert('This file has not been saved to the filesystem.');
+    }
+    shell.openItem(filePath);
+};
+
 const markdownContextMenu = Menu.buildFromTemplate([
     {
         label: 'Open file',
         click() {
             mainProcess.getFileFromUser(currentWindow);
         }
+    },
+    {
+        label: 'Show File',
+        click: showFile
+    },
+    {
+        label: 'Open in Default Editor',
+        click: openInDefaultApplication
     },
     {
         type: 'separator'
@@ -81,20 +103,6 @@ const renderFile = (file, content) => {
     updateUserInterface(false);
     showFileButton.disabled = false;
     openInDefaultButton.disabled = false;
-};
-
-const showFile = () => {
-    if(!filePath) {
-        return alert('This file has not been saved to the filesystem.');
-    }
-    shell.showItemInFolder(filePath);
-};
-
-const openInDefaultApplication = () => {
-  if(!filePath) {
-      return alert('This file has not been saved to the filesystem.');
-  }
-  shell.openItem(filePath);
 };
 
 markdownView.addEventListener('keyup', (e) => {
