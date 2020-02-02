@@ -19,55 +19,45 @@ const currentWindow = remote.getCurrentWindow();
 let filePath = '';
 let originalContent = '';
 
-const showFile = () => {
-    if(!filePath) {
-        return alert('This file has not been saved to the filesystem.');
-    }
-    shell.showItemInFolder(filePath);
-};
-
-const openInDefaultApplication = () => {
-    if(!filePath) {
-        return alert('This file has not been saved to the filesystem.');
-    }
-    shell.openItem(filePath);
-};
-
-const markdownContextMenu = Menu.buildFromTemplate([
-    {
-        label: 'Open file',
-        click() {
-            mainProcess.getFileFromUser(currentWindow);
+const createContextMenu = () => {
+    return Menu.buildFromTemplate([
+        {
+            label: 'Open file',
+            click() {
+                mainProcess.getFileFromUser(currentWindow);
+            }
+        },
+        {
+            label: 'Show File',
+            click: showFile,
+            enabled: !!filePath
+        },
+        {
+            label: 'Open in Default Editor',
+            click: openInDefaultApplication,
+            enabled: !!filePath
+        },
+        {
+            type: 'separator'
+        },
+        {
+            label: 'Cut',
+            role: 'cut'
+        },
+        {
+            label: 'Copy',
+            role: 'copy'
+        },
+        {
+            label: 'Paste',
+            role: 'paste'
+        },
+        {
+            label: 'Select All',
+            role: 'selectAll'
         }
-    },
-    {
-        label: 'Show File',
-        click: showFile
-    },
-    {
-        label: 'Open in Default Editor',
-        click: openInDefaultApplication
-    },
-    {
-        type: 'separator'
-    },
-    {
-        label: 'Cut',
-        role: 'cut'
-    },
-    {
-        label: 'Copy',
-        role: 'copy'
-    },
-    {
-        label: 'Paste',
-        role: 'paste'
-    },
-    {
-        label: 'Select All',
-        role: 'selectAll'
-    }
-]);
+    ]);
+};
 
 const renderMarkdownToHtml = (markdown) => {
     htmlView.innerHTML = marked(markdown);
@@ -103,6 +93,20 @@ const renderFile = (file, content) => {
     updateUserInterface(false);
     showFileButton.disabled = false;
     openInDefaultButton.disabled = false;
+};
+
+const showFile = () => {
+    if(!filePath) {
+        return alert('This file has not been saved to the filesystem.');
+    }
+    shell.showItemInFolder(filePath);
+};
+
+const openInDefaultApplication = () => {
+    if(!filePath) {
+        return alert('This file has not been saved to the filesystem.');
+    }
+    shell.openItem(filePath);
 };
 
 markdownView.addEventListener('keyup', (e) => {
@@ -160,7 +164,7 @@ markdownView.addEventListener('drop', (event) => {
 
 markdownView.addEventListener('contextmenu', (event) => {
     event.preventDefault();
-    markdownContextMenu.popup();
+    createContextMenu().popup();
 });
 
 showFileButton.addEventListener('click', showFile);
