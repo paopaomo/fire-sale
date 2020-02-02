@@ -214,6 +214,10 @@ ipcRenderer.on('save-html', () => {
     mainProcess.saveHTML(currentWindow, htmlView.innerHTML);
 });
 
+ipcRenderer.on('show-file', showFile);
+
+ipcRenderer.on('open-in-default-editor', openInDefaultApplication);
+
 document.addEventListener('dragstart', event => event.preventDefault());
 document.addEventListener('dragover', event => event.preventDefault());
 document.addEventListener('dragleave', event => event.preventDefault());
