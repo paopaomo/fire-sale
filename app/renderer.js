@@ -1,5 +1,5 @@
 const marked = require('marked');
-const { remote, ipcRenderer } = require('electron');
+const { remote, ipcRenderer, shell } = require('electron');
 const path = require('path');
 
 const mainProcess = remote.require('./main.js');
@@ -79,6 +79,22 @@ const renderFile = (file, content) => {
     markdownView.value = content;
     renderMarkdownToHtml(content);
     updateUserInterface(false);
+    showFileButton.disabled = false;
+    openInDefaultButton.disabled = false;
+};
+
+const showFile = () => {
+    if(!filePath) {
+        return alert('This file has not been saved to the filesystem.');
+    }
+    shell.showItemInFolder(filePath);
+};
+
+const openInDefaultApplication = () => {
+  if(!filePath) {
+      return alert('This file has not been saved to the filesystem.');
+  }
+  shell.openItem(filePath);
 };
 
 markdownView.addEventListener('keyup', (e) => {
@@ -138,6 +154,10 @@ markdownView.addEventListener('contextmenu', (event) => {
     event.preventDefault();
     markdownContextMenu.popup();
 });
+
+showFileButton.addEventListener('click', showFile);
+
+openInDefaultButton.addEventListener('click', openInDefaultApplication);
 
 ipcRenderer.on('file-opened', (event, file, content) => {
     if(currentWindow.isDocumentEdited()) {
