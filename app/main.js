@@ -162,4 +162,6 @@ app.on('will-finish-launching', () => {
     require('./crash-report').init();
 });
 
+process.on('uncaughtException', require('./crash-report').sendUncaughtException);
+
 module.exports = { getFileFromUser, createWindow, saveHTML, saveMarkdown, openFile };
