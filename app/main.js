@@ -159,6 +159,7 @@ app.on('will-finish-launching', () => {
         const win = createWindow();
         openFile(win, file);
     });
+    require('./crash-report').init();
 });
 
 module.exports = { getFileFromUser, createWindow, saveHTML, saveMarkdown, openFile };

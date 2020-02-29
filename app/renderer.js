@@ -19,6 +19,8 @@ const currentWindow = remote.getCurrentWindow();
 let filePath = '';
 let originalContent = '';
 
+require('./crash-report').init();
+
 const createContextMenu = () => {
     return Menu.buildFromTemplate([
         {
