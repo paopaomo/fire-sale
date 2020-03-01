@@ -25,8 +25,8 @@ const sendUncaughtException = (err) => {
         process_type: process.type,
         ver: process.versions.electron,
         error: {
-            message: err.error.message,
-            stack: err.error.stack
+            message: err.error ? err.error.message : err.message,
+            stack: err.error ? err.error.stack : err.stack
         }
     });
 };
