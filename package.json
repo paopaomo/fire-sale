@@ -23,8 +23,9 @@
   },
   "homepage": "https://github.com/paopaomo/fire-sale#readme",
   "dependencies": {
-    "marked": "^0.8.0",
-    "axios": "latest"
+    "axios": "latest",
+    "isdev": "^1.0.1",
+    "marked": "^0.8.0"
   },
   "devDependencies": {
     "electron": "^7.1.11",

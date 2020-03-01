@@ -1,6 +1,7 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const isDev = require('isdev');
 
 const windows = new Set();
 const openFiles = new Map();
@@ -160,6 +161,9 @@ app.on('will-finish-launching', () => {
         openFile(win, file);
     });
     require('./crash-report').init();
+    if(!isDev) {
+        require('./auto-updater');
+    }
 });
 
 process.on('uncaughtException', require('./crash-report').sendUncaughtException);
