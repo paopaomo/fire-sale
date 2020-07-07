@@ -28,7 +28,7 @@
     "marked": "^0.8.0"
   },
   "devDependencies": {
-    "electron": "^7.1.11",
+    "electron": "^7.2.4",
     "electron-packager": "^14.2.1"
   }
 }
